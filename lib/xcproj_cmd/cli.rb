@@ -54,13 +54,25 @@ module XcprojCmd
       exit 1
     end
     
-    desc "group PATH", "Create a group"
+    desc "add_group PATH", "Create a group"
     method_option :create_folder,
                   type: :boolean,
                   default: false,
                   desc: 'Create physical folder on disk'
-    def group(path)
+    def add_group(path)
       Commands::AddGroup.new(project_path, options).execute(path)
+    rescue Error => e
+      puts "Error: #{e.message}".red
+      exit 1
+    end
+    
+    desc "remove_group PATH", "Remove a group"
+    method_option :delete_folder,
+                  type: :boolean,
+                  default: false,
+                  desc: 'Also delete physical folder from disk'
+    def remove_group(path)
+      Commands::RemoveGroup.new(project_path, options).execute(path)
     rescue Error => e
       puts "Error: #{e.message}".red
       exit 1

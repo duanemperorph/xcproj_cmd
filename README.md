@@ -77,10 +77,16 @@ xcproj remove OldFile.swift --delete
 
 ```bash
 # Create a new group
-xcproj group MyApp/NewFeature
+xcproj add_group MyApp/NewFeature
 
 # Create group and matching folder on disk
-xcproj group MyApp/NewFeature --create-folder
+xcproj add_group MyApp/NewFeature --create-folder
+
+# Remove a group (keeps folder on disk)
+xcproj remove_group MyApp/OldFeature
+
+# Remove group and delete folder from disk
+xcproj remove_group MyApp/OldFeature --delete-folder
 ```
 
 ### Move Files and Groups
@@ -115,7 +121,7 @@ xcproj info LoginViewController.swift --json
 xcproj list MyApp.xcodeproj
 
 # Create a new feature group
-xcproj group MyApp/Features/Auth --create-folder
+xcproj add_group MyApp/Features/Auth --create-folder
 
 # Add files to the new group
 xcproj add Sources/LoginView.swift --group MyApp/Features/Auth --targets MyApp
@@ -132,6 +138,9 @@ xcproj move LoginView.swift MyApp/Views
 
 # Remove old files
 xcproj remove DeprecatedFile.swift --delete
+
+# Remove a deprecated feature group
+xcproj remove_group MyApp/Features/OldFeature --delete-folder
 ```
 
 ## Development

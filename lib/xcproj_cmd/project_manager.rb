@@ -122,6 +122,20 @@ module XcprojCmd
       current
     end
     
+    # Remove group
+    def remove_group(path, delete_folder: false)
+      group = find_group(path)
+      raise GroupNotFoundError, "Group not found: #{path}" unless group
+      
+      # Delete folder from disk if requested
+      if delete_folder && group.real_path && group.real_path.exist?
+        FileUtils.rm_rf(group.real_path)
+      end
+      
+      # Remove the group from the project
+      group.remove_from_project
+    end
+    
     # Move file to a different group
     def move_file(file_name, target_group_path)
       file_ref = find_file(file_name)

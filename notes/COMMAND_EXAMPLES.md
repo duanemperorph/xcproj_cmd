@@ -15,7 +15,8 @@ xcproj help
 xcproj help list
 xcproj help add
 xcproj help remove
-xcproj help group
+xcproj help add_group
+xcproj help remove_group
 xcproj help move
 xcproj help info
 ```
@@ -82,21 +83,36 @@ for file in Deprecated*.swift; do
 done
 ```
 
-### Group Management Commands
+### Add Group Commands
 
 ```bash
 # Create a new group
-xcproj group MyApp/Features --project MyApp.xcodeproj
+xcproj add_group MyApp/Features --project MyApp.xcodeproj
 
 # Create nested group structure
-xcproj group MyApp/Features/Auth/ViewModels --project MyApp.xcodeproj
+xcproj add_group MyApp/Features/Auth/ViewModels --project MyApp.xcodeproj
 
 # Create group and matching folder on disk
-xcproj group MyApp/Services --project MyApp.xcodeproj --create-folder
+xcproj add_group MyApp/Services --project MyApp.xcodeproj --create-folder
 
 # Create multiple groups (script example)
 for feature in Auth Profile Settings; do
-  xcproj group "MyApp/Features/$feature" --project MyApp.xcodeproj --create-folder
+  xcproj add_group "MyApp/Features/$feature" --project MyApp.xcodeproj --create-folder
+done
+```
+
+### Remove Group Commands
+
+```bash
+# Remove a group (keeps folder on disk)
+xcproj remove_group MyApp/OldFeature --project MyApp.xcodeproj
+
+# Remove group and delete folder from disk
+xcproj remove_group MyApp/Services --project MyApp.xcodeproj --delete-folder
+
+# Remove multiple groups (script example)
+for feature in Deprecated OldFeature Legacy; do
+  xcproj remove_group "MyApp/Features/$feature" --project MyApp.xcodeproj --delete-folder
 done
 ```
 
@@ -139,10 +155,10 @@ xcproj info MyApp/Views/Auth/LoginView.swift --project MyApp.xcodeproj
 PROJECT="MyApp.xcodeproj"
 
 # Create group structure
-xcproj group MyApp/Features/Authentication --project $PROJECT --create-folder
-xcproj group MyApp/Features/Authentication/Views --project $PROJECT --create-folder
-xcproj group MyApp/Features/Authentication/ViewModels --project $PROJECT --create-folder
-xcproj group MyApp/Features/Authentication/Services --project $PROJECT --create-folder
+xcproj add_group MyApp/Features/Authentication --project $PROJECT --create-folder
+xcproj add_group MyApp/Features/Authentication/Views --project $PROJECT --create-folder
+xcproj add_group MyApp/Features/Authentication/ViewModels --project $PROJECT --create-folder
+xcproj add_group MyApp/Features/Authentication/Services --project $PROJECT --create-folder
 
 # Add files
 xcproj add Auth/LoginView.swift --project $PROJECT \
@@ -167,9 +183,9 @@ PROJECT="MyApp.xcodeproj"
 xcproj list --project $PROJECT
 
 # Create new organization structure
-xcproj group MyApp/NewStructure/Models --project $PROJECT
-xcproj group MyApp/NewStructure/Views --project $PROJECT
-xcproj group MyApp/NewStructure/Controllers --project $PROJECT
+xcproj add_group MyApp/NewStructure/Models --project $PROJECT
+xcproj add_group MyApp/NewStructure/Views --project $PROJECT
+xcproj add_group MyApp/NewStructure/Controllers --project $PROJECT
 
 # Move files to new structure
 xcproj move User.swift MyApp/NewStructure/Models --project $PROJECT
@@ -210,6 +226,23 @@ for file in Generated/*.swift; do
     --targets $TARGET \
     --create-groups
 done
+```
+
+### Workflow 6: Clean Up Deprecated Groups
+
+```bash
+PROJECT="MyApp.xcodeproj"
+
+# List current structure to identify deprecated groups
+xcproj list --project $PROJECT --format flat
+
+# Remove deprecated feature groups
+xcproj remove_group MyApp/Features/OldFeature --project $PROJECT --delete-folder
+xcproj remove_group MyApp/Features/LegacyUI --project $PROJECT --delete-folder
+xcproj remove_group MyApp/Services/DeprecatedService --project $PROJECT --delete-folder
+
+# Verify changes
+xcproj list --project $PROJECT
 ```
 
 ### Workflow 5: Audit Target Membership
@@ -365,7 +398,7 @@ xcproj list --project MyApp.xcodeproj
 # Mirror filesystem structure in Xcode groups
 find Sources -type d | while read dir; do
   group_path="MyApp/${dir#Sources/}"
-  xcproj group "$group_path" --project MyApp.xcodeproj
+  xcproj add_group "$group_path" --project MyApp.xcodeproj
 done
 
 find Sources -name "*.swift" | while read file; do

@@ -26,22 +26,27 @@ xcproj add FILE [--project PATH] [--group GROUP_PATH] [--targets TARGET1 TARGET2
 xcproj remove FILE [--project PATH] [--delete]
 ```
 
-### 4. group - Create a group
+### 4. add_group - Create a group
 ```bash
-xcproj group GROUP_PATH [--project PATH] [--create-folder]
+xcproj add_group GROUP_PATH [--project PATH] [--create-folder]
 ```
 
-### 5. move - Move file or group
+### 5. remove_group - Remove a group
+```bash
+xcproj remove_group GROUP_PATH [--project PATH] [--delete-folder]
+```
+
+### 6. move - Move file or group
 ```bash
 xcproj move SOURCE DESTINATION [--project PATH] [--group]
 ```
 
-### 6. info - Show file/group information
+### 7. info - Show file/group information
 ```bash
 xcproj info PATH [--project PATH] [--json]
 ```
 
-### 7. version - Show version
+### 8. version - Show version
 ```bash
 xcproj version
 ```
@@ -54,6 +59,7 @@ xcproj version
 - `--create-groups` - Auto-create missing groups when adding files
 - `--create-folder` - Create physical folder when creating group
 - `--delete` - Delete file from disk when removing
+- `--delete-folder` - Delete physical folder when removing group
 - `--format tree|flat|json` - Output format for list command
 - `--targets` - Show target membership in list output
 - `--json` - Output as JSON for info command
@@ -67,7 +73,12 @@ xcproj add path/to/File.swift --project MyApp.xcodeproj --group MyApp/Views --ta
 
 **Create group structure:**
 ```bash
-xcproj group MyApp/Features/Auth --project MyApp.xcodeproj --create-folder
+xcproj add_group MyApp/Features/Auth --project MyApp.xcodeproj --create-folder
+```
+
+**Remove group:**
+```bash
+xcproj remove_group MyApp/OldFeature --project MyApp.xcodeproj --delete-folder
 ```
 
 **Move file between groups:**
@@ -157,9 +168,9 @@ done
 **Create feature module structure:**
 ```bash
 FEATURE="Authentication"
-xcproj group "MyApp/Features/$FEATURE" --create-folder
-xcproj group "MyApp/Features/$FEATURE/Views" --create-folder
-xcproj group "MyApp/Features/$FEATURE/ViewModels" --create-folder
+xcproj add_group "MyApp/Features/$FEATURE" --create-folder
+xcproj add_group "MyApp/Features/$FEATURE/Views" --create-folder
+xcproj add_group "MyApp/Features/$FEATURE/ViewModels" --create-folder
 ```
 
 **Remove deprecated files:**
@@ -175,7 +186,10 @@ done
 → `xcproj add FILE --group GROUP --targets TARGETS`
 
 **Need to create groups first?**
-→ Add `--create-groups` flag OR `xcproj group GROUP_PATH --create-folder`
+→ Add `--create-groups` flag OR `xcproj add_group GROUP_PATH --create-folder`
+
+**Need to remove a group?**
+→ `xcproj remove_group GROUP` (keeps on disk) or `xcproj remove_group GROUP --delete-folder`
 
 **Need to move a file?**
 → `xcproj move FILE TARGET_GROUP`
