@@ -10,6 +10,39 @@ bundle install
 bundle exec rake install
 ```
 
+**Installation to user directory:**
+
+If you want to install the gem globally without requiring `bundle exec`:
+
+```bash
+# Build the gem
+gem build xcproj_cmd.gemspec
+
+# Install to user directory (no sudo required)
+gem install --user-install pkg/xcproj_cmd-0.1.0.gem
+
+# Add gem bin directory to your PATH (for zsh)
+echo 'export PATH="$HOME/.gem/ruby/2.6.0/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+
+# For bash, use ~/.bashrc or ~/.bash_profile instead
+echo 'export PATH="$HOME/.gem/ruby/2.6.0/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+Now you can use `xcproj` from anywhere without `bundle exec`:
+```bash
+xcproj version
+xcproj help
+```
+
+To reinstall after making changes:
+```bash
+gem build xcproj_cmd.gemspec
+gem install --user-install pkg/xcproj_cmd-0.1.0.gem
+```
+
+
 ## Usage
 
 ### Basic Commands
