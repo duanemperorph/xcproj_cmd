@@ -18,4 +18,4 @@ mkmf.log
 Gemfile.lock
 /vendor/bundle
 /.bundle
-
+.cursor

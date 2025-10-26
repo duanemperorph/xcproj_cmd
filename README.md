@@ -10,11 +10,6 @@ bundle install
 bundle exec rake install
 ```
 
-**From RubyGems (when published):**
-```bash
-gem install xcproj_cmd
-```
-
 ## Usage
 
 ### Basic Commands
@@ -66,12 +61,11 @@ xcproj add path/to/NewFile.swift --group MyApp/New/Feature --create-groups
 ### Remove Files
 
 ```bash
-# Remove file reference (keeps file on disk)
+# Remove file reference from project
 xcproj remove OldFile.swift
-
-# Remove reference and delete from disk
-xcproj remove OldFile.swift --delete
 ```
+
+**Note:** This only removes the file reference from the Xcode project. Use `rm` to delete files from the filesystem.
 
 ### Manage Groups
 
@@ -79,15 +73,11 @@ xcproj remove OldFile.swift --delete
 # Create a new group
 xcproj add_group MyApp/NewFeature
 
-# Create group and matching folder on disk
-xcproj add_group MyApp/NewFeature --create-folder
-
-# Remove a group (keeps folder on disk)
+# Remove a group
 xcproj remove_group MyApp/OldFeature
-
-# Remove group and delete folder from disk
-xcproj remove_group MyApp/OldFeature --delete-folder
 ```
+
+**Note:** Group commands only manage the Xcode project structure and do not create or delete filesystem folders. Use standard shell commands (`mkdir`, `rm -rf`) to manage filesystem folders separately. This separation ensures you have full control and visibility over filesystem operations.
 
 ### Move Files and Groups
 
@@ -121,7 +111,7 @@ xcproj info LoginViewController.swift --json
 xcproj list MyApp.xcodeproj
 
 # Create a new feature group
-xcproj add_group MyApp/Features/Auth --create-folder
+xcproj add_group MyApp/Features/Auth
 
 # Add files to the new group
 xcproj add Sources/LoginView.swift --group MyApp/Features/Auth --targets MyApp
@@ -136,11 +126,11 @@ xcproj info LoginView.swift
 # Move a file to a different location
 xcproj move LoginView.swift MyApp/Views
 
-# Remove old files
-xcproj remove DeprecatedFile.swift --delete
+# Remove old file reference
+xcproj remove DeprecatedFile.swift
 
 # Remove a deprecated feature group
-xcproj remove_group MyApp/Features/OldFeature --delete-folder
+xcproj remove_group MyApp/Features/OldFeature
 ```
 
 ## Development

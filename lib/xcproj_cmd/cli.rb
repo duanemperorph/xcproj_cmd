@@ -43,10 +43,6 @@ module XcprojCmd
     end
     
     desc "remove PATH", "Remove a file from the project"
-    method_option :delete,
-                  type: :boolean,
-                  default: false,
-                  desc: 'Also delete file from filesystem'
     def remove(path)
       Commands::RemoveFile.new(project_path, options).execute(path)
     rescue Error => e
@@ -55,10 +51,6 @@ module XcprojCmd
     end
     
     desc "add_group PATH", "Create a group"
-    method_option :create_folder,
-                  type: :boolean,
-                  default: false,
-                  desc: 'Create physical folder on disk'
     def add_group(path)
       Commands::AddGroup.new(project_path, options).execute(path)
     rescue Error => e
@@ -67,10 +59,6 @@ module XcprojCmd
     end
     
     desc "remove_group PATH", "Remove a group"
-    method_option :delete_folder,
-                  type: :boolean,
-                  default: false,
-                  desc: 'Also delete physical folder from disk'
     def remove_group(path)
       Commands::RemoveGroup.new(project_path, options).execute(path)
     rescue Error => e

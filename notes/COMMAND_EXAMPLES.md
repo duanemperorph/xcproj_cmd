@@ -70,12 +70,11 @@ done
 
 ### Remove File Commands
 
-```bash
-# Remove file reference (keeps file on disk)
-xcproj remove OldFile.swift --project MyApp.xcodeproj
+**Note:** Remove commands only remove file references from the Xcode project. Filesystem files must be deleted separately using `rm`.
 
-# Remove file reference and delete from disk
-xcproj remove DeprecatedFile.swift --project MyApp.xcodeproj --delete
+```bash
+# Remove file reference from project
+xcproj remove OldFile.swift --project MyApp.xcodeproj
 
 # Remove multiple files (script example)
 for file in Deprecated*.swift; do
@@ -85,6 +84,8 @@ done
 
 ### Add Group Commands
 
+**Note:** Group commands only manage the Xcode project structure. Filesystem folders must be managed separately using standard shell commands (`mkdir`, `rm -rf`).
+
 ```bash
 # Create a new group
 xcproj add_group MyApp/Features --project MyApp.xcodeproj
@@ -92,27 +93,21 @@ xcproj add_group MyApp/Features --project MyApp.xcodeproj
 # Create nested group structure
 xcproj add_group MyApp/Features/Auth/ViewModels --project MyApp.xcodeproj
 
-# Create group and matching folder on disk
-xcproj add_group MyApp/Services --project MyApp.xcodeproj --create-folder
-
 # Create multiple groups (script example)
 for feature in Auth Profile Settings; do
-  xcproj add_group "MyApp/Features/$feature" --project MyApp.xcodeproj --create-folder
+  xcproj add_group "MyApp/Features/$feature" --project MyApp.xcodeproj
 done
 ```
 
 ### Remove Group Commands
 
 ```bash
-# Remove a group (keeps folder on disk)
+# Remove a group
 xcproj remove_group MyApp/OldFeature --project MyApp.xcodeproj
-
-# Remove group and delete folder from disk
-xcproj remove_group MyApp/Services --project MyApp.xcodeproj --delete-folder
 
 # Remove multiple groups (script example)
 for feature in Deprecated OldFeature Legacy; do
-  xcproj remove_group "MyApp/Features/$feature" --project MyApp.xcodeproj --delete-folder
+  xcproj remove_group "MyApp/Features/$feature" --project MyApp.xcodeproj
 done
 ```
 
@@ -153,12 +148,18 @@ xcproj info MyApp/Views/Auth/LoginView.swift --project MyApp.xcodeproj
 
 ```bash
 PROJECT="MyApp.xcodeproj"
+PROJECT_DIR="MyApp"
 
-# Create group structure
-xcproj add_group MyApp/Features/Authentication --project $PROJECT --create-folder
-xcproj add_group MyApp/Features/Authentication/Views --project $PROJECT --create-folder
-xcproj add_group MyApp/Features/Authentication/ViewModels --project $PROJECT --create-folder
-xcproj add_group MyApp/Features/Authentication/Services --project $PROJECT --create-folder
+# Create filesystem folders first
+mkdir -p "$PROJECT_DIR/Features/Authentication/Views"
+mkdir -p "$PROJECT_DIR/Features/Authentication/ViewModels"
+mkdir -p "$PROJECT_DIR/Features/Authentication/Services"
+
+# Create Xcode project groups
+xcproj add_group MyApp/Features/Authentication --project $PROJECT
+xcproj add_group MyApp/Features/Authentication/Views --project $PROJECT
+xcproj add_group MyApp/Features/Authentication/ViewModels --project $PROJECT
+xcproj add_group MyApp/Features/Authentication/Services --project $PROJECT
 
 # Add files
 xcproj add Auth/LoginView.swift --project $PROJECT \
@@ -201,10 +202,13 @@ PROJECT="MyApp.xcodeproj"
 # List all files
 xcproj list --project $PROJECT --format flat > all_files.txt
 
-# Remove deprecated files
-xcproj remove OldViewController.swift --project $PROJECT --delete
-xcproj remove DeprecatedHelper.swift --project $PROJECT --delete
-xcproj remove LegacyService.swift --project $PROJECT --delete
+# Remove deprecated file references from Xcode project
+xcproj remove OldViewController.swift --project $PROJECT
+xcproj remove DeprecatedHelper.swift --project $PROJECT
+xcproj remove LegacyService.swift --project $PROJECT
+
+# Delete files from filesystem (if desired)
+rm OldViewController.swift DeprecatedHelper.swift LegacyService.swift
 
 # Verify changes
 xcproj list --project $PROJECT
@@ -232,14 +236,20 @@ done
 
 ```bash
 PROJECT="MyApp.xcodeproj"
+PROJECT_DIR="MyApp"
 
 # List current structure to identify deprecated groups
 xcproj list --project $PROJECT --format flat
 
-# Remove deprecated feature groups
-xcproj remove_group MyApp/Features/OldFeature --project $PROJECT --delete-folder
-xcproj remove_group MyApp/Features/LegacyUI --project $PROJECT --delete-folder
-xcproj remove_group MyApp/Services/DeprecatedService --project $PROJECT --delete-folder
+# Remove deprecated feature groups from Xcode project
+xcproj remove_group MyApp/Features/OldFeature --project $PROJECT
+xcproj remove_group MyApp/Features/LegacyUI --project $PROJECT
+xcproj remove_group MyApp/Services/DeprecatedService --project $PROJECT
+
+# Remove corresponding filesystem folders (if desired)
+rm -rf "$PROJECT_DIR/Features/OldFeature"
+rm -rf "$PROJECT_DIR/Features/LegacyUI"
+rm -rf "$PROJECT_DIR/Services/DeprecatedService"
 
 # Verify changes
 xcproj list --project $PROJECT
@@ -327,8 +337,9 @@ project-info:
 .PHONY: clean-deprecated
 clean-deprecated:
 	@for file in Deprecated*.swift; do \
-		[ -f "$$file" ] && xcproj remove "$$file" --project $(PROJECT) --delete; \
+		[ -f "$$file" ] && xcproj remove "$$file" --project $(PROJECT); \
 	done
+	@rm -f Deprecated*.swift
 ```
 
 ## Scripting Tips

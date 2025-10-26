@@ -1,5 +1,14 @@
 # xcproj Agent Rules & Quick Reference
 
+## Important: Separation of Concerns
+
+**xcproj only manages Xcode project structure, NOT the filesystem.**
+
+- `add` / `remove` commands only modify file references in the Xcode project
+- `add_group` / `remove_group` commands only modify group structure in the Xcode project
+
+This separation ensures you have full control and visibility over filesystem operations.
+
 ## Command Syntax
 
 All commands follow this pattern:
@@ -23,17 +32,17 @@ xcproj add FILE [--project PATH] [--group GROUP_PATH] [--targets TARGET1 TARGET2
 
 ### 3. remove - Remove file from project
 ```bash
-xcproj remove FILE [--project PATH] [--delete]
+xcproj remove FILE [--project PATH]
 ```
 
 ### 4. add_group - Create a group
 ```bash
-xcproj add_group GROUP_PATH [--project PATH] [--create-folder]
+xcproj add_group GROUP_PATH [--project PATH]
 ```
 
 ### 5. remove_group - Remove a group
 ```bash
-xcproj remove_group GROUP_PATH [--project PATH] [--delete-folder]
+xcproj remove_group GROUP_PATH [--project PATH]
 ```
 
 ### 6. move - Move file or group
@@ -57,9 +66,6 @@ xcproj version
 - `--group PATH` or `-g PATH` - Specify group path (e.g., "MyApp/Controllers/Auth")
 - `--targets T1 T2` or `-t T1 T2` - Specify target names
 - `--create-groups` - Auto-create missing groups when adding files
-- `--create-folder` - Create physical folder when creating group
-- `--delete` - Delete file from disk when removing
-- `--delete-folder` - Delete physical folder when removing group
 - `--format tree|flat|json` - Output format for list command
 - `--targets` - Show target membership in list output
 - `--json` - Output as JSON for info command
@@ -73,12 +79,12 @@ xcproj add path/to/File.swift --project MyApp.xcodeproj --group MyApp/Views --ta
 
 **Create group structure:**
 ```bash
-xcproj add_group MyApp/Features/Auth --project MyApp.xcodeproj --create-folder
+xcproj add_group MyApp/Features/Auth --project MyApp.xcodeproj
 ```
 
 **Remove group:**
 ```bash
-xcproj remove_group MyApp/OldFeature --project MyApp.xcodeproj --delete-folder
+xcproj remove_group MyApp/OldFeature --project MyApp.xcodeproj
 ```
 
 **Move file between groups:**
@@ -86,9 +92,9 @@ xcproj remove_group MyApp/OldFeature --project MyApp.xcodeproj --delete-folder
 xcproj move OldFile.swift MyApp/NewLocation --project MyApp.xcodeproj
 ```
 
-**Remove file and delete from disk:**
+**Remove file reference:**
 ```bash
-xcproj remove UnusedFile.swift --project MyApp.xcodeproj --delete
+xcproj remove UnusedFile.swift --project MyApp.xcodeproj
 ```
 
 **Get file information:**
@@ -168,16 +174,23 @@ done
 **Create feature module structure:**
 ```bash
 FEATURE="Authentication"
-xcproj add_group "MyApp/Features/$FEATURE" --create-folder
-xcproj add_group "MyApp/Features/$FEATURE/Views" --create-folder
-xcproj add_group "MyApp/Features/$FEATURE/ViewModels" --create-folder
+# Create filesystem folders first
+mkdir -p "MyApp/Features/$FEATURE/Views"
+mkdir -p "MyApp/Features/$FEATURE/ViewModels"
+# Then create Xcode project groups
+xcproj add_group "MyApp/Features/$FEATURE"
+xcproj add_group "MyApp/Features/$FEATURE/Views"
+xcproj add_group "MyApp/Features/$FEATURE/ViewModels"
 ```
 
 **Remove deprecated files:**
 ```bash
+# Remove from Xcode project
 for file in Deprecated*.swift; do
-  xcproj remove "$file" --project MyApp.xcodeproj --delete
+  xcproj remove "$file" --project MyApp.xcodeproj
 done
+# Delete from filesystem
+rm Deprecated*.swift
 ```
 
 ## Quick Decision Tree
@@ -186,16 +199,16 @@ done
 → `xcproj add FILE --group GROUP --targets TARGETS`
 
 **Need to create groups first?**
-→ Add `--create-groups` flag OR `xcproj add_group GROUP_PATH --create-folder`
+→ Add `--create-groups` flag OR use `mkdir -p` then `xcproj add_group GROUP_PATH`
 
 **Need to remove a group?**
-→ `xcproj remove_group GROUP` (keeps on disk) or `xcproj remove_group GROUP --delete-folder`
+→ `xcproj remove_group GROUP` (filesystem folders managed separately with `rm -rf`)
 
 **Need to move a file?**
 → `xcproj move FILE TARGET_GROUP`
 
 **Need to remove a file?**
-→ `xcproj remove FILE` (keeps on disk) or `xcproj remove FILE --delete`
+→ `xcproj remove FILE` (filesystem files deleted separately with `rm`)
 
 **Need to see structure?**
 → `xcproj list` (tree) or `xcproj list --format flat` (paths)

@@ -82,12 +82,9 @@ module XcprojCmd
     end
     
     # Remove file from project
-    def remove_file(name_or_path, delete_from_disk: false)
+    def remove_file(name_or_path)
       file_ref = find_file(name_or_path)
       raise FileNotFoundError, "File not found: #{name_or_path}" unless file_ref
-      
-      # Delete from disk if requested
-      File.delete(file_ref.real_path) if delete_from_disk && file_ref.real_path.exist?
       
       # Remove from all targets
       project.targets.each do |target|
@@ -100,7 +97,7 @@ module XcprojCmd
     end
     
     # Add group
-    def add_group(path, create_folder: false)
+    def add_group(path)
       parts = path.split('/')
       current = project.main_group
       
@@ -111,11 +108,6 @@ module XcprojCmd
           current = existing
         else
           current = current.new_group(part)
-          
-          if create_folder
-            folder_path = File.join(project_dir, path)
-            FileUtils.mkdir_p(folder_path)
-          end
         end
       end
       
@@ -123,14 +115,9 @@ module XcprojCmd
     end
     
     # Remove group
-    def remove_group(path, delete_folder: false)
+    def remove_group(path)
       group = find_group(path)
       raise GroupNotFoundError, "Group not found: #{path}" unless group
-      
-      # Delete folder from disk if requested
-      if delete_folder && group.real_path && group.real_path.exist?
-        FileUtils.rm_rf(group.real_path)
-      end
       
       # Remove the group from the project
       group.remove_from_project
