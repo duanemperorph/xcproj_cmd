@@ -19,7 +19,7 @@ If you want to install the gem globally without requiring `bundle exec`:
 gem build xcproj_cmd.gemspec
 
 # Install to user directory (no sudo required)
-gem install --user-install pkg/xcproj_cmd-0.1.0.gem
+gem install --user-install xcproj_cmd-0.1.0.gem
 
 # Add gem bin directory to your PATH (for zsh)
 echo 'export PATH="$HOME/.gem/ruby/2.6.0/bin:$PATH"' >> ~/.zshrc
@@ -39,7 +39,7 @@ xcproj help
 To reinstall after making changes:
 ```bash
 gem build xcproj_cmd.gemspec
-gem install --user-install pkg/xcproj_cmd-0.1.0.gem
+gem install --user-install xcproj_cmd-0.1.0.gem
 ```
 
 
@@ -78,7 +78,7 @@ xcproj list --project MyApp.xcodeproj
 ### Add Files
 
 ```bash
-# Add a file to the project root
+# Add a file to the project root (relative or absolute path)
 xcproj add path/to/NewFile.swift
 
 # Add to a specific group
@@ -90,6 +90,8 @@ xcproj add path/to/NewFile.swift --targets MyApp MyAppTests
 # Auto-create groups if they don't exist
 xcproj add path/to/NewFile.swift --group MyApp/New/Feature --create-groups
 ```
+
+**Note:** Both relative and absolute file paths are supported. The tool automatically converts relative paths to absolute paths to avoid path resolution issues.
 
 ### Remove Files
 

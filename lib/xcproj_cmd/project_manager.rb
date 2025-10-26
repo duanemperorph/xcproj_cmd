@@ -71,7 +71,10 @@ module XcprojCmd
       target_group = group ? find_group(group) : project.main_group
       raise GroupNotFoundError, "Group not found: #{group}" unless target_group
       
-      file_ref = target_group.new_file(file_path)
+      # Convert to absolute path to avoid path resolution issues with xcodeproj gem
+      absolute_path = File.absolute_path(file_path)
+      
+      file_ref = target_group.new_file(absolute_path)
       
       # Add to targets
       targets(targets).each do |target|
