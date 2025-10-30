@@ -114,16 +114,6 @@ xcproj remove_group MyApp/OldFeature
 
 **Note:** Group commands only manage the Xcode project structure and do not create or delete filesystem folders. Use standard shell commands (`mkdir`, `rm -rf`) to manage filesystem folders separately. This separation ensures you have full control and visibility over filesystem operations.
 
-### Move Files and Groups
-
-```bash
-# Move a file to a different group
-xcproj move LoginView.swift MyApp/Views/Auth
-
-# Move a group to a different parent
-xcproj move MyApp/OldLocation MyApp/NewLocation --group
-```
-
 ### Get Information
 
 ```bash
@@ -157,9 +147,6 @@ xcproj list --targets
 
 # Get info about a specific file
 xcproj info LoginView.swift
-
-# Move a file to a different location
-xcproj move LoginView.swift MyApp/Views
 
 # Remove old file reference
 xcproj remove DeprecatedFile.swift

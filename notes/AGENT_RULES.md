@@ -45,17 +45,12 @@ xcproj add_group GROUP_PATH [--project PATH]
 xcproj remove_group GROUP_PATH [--project PATH]
 ```
 
-### 6. move - Move file or group
-```bash
-xcproj move SOURCE DESTINATION [--project PATH] [--group]
-```
-
-### 7. info - Show file/group information
+### 6. info - Show file/group information
 ```bash
 xcproj info PATH [--project PATH] [--json]
 ```
 
-### 8. version - Show version
+### 7. version - Show version
 ```bash
 xcproj version
 ```
@@ -85,11 +80,6 @@ xcproj add_group MyApp/Features/Auth --project MyApp.xcodeproj
 **Remove group:**
 ```bash
 xcproj remove_group MyApp/OldFeature --project MyApp.xcodeproj
-```
-
-**Move file between groups:**
-```bash
-xcproj move OldFile.swift MyApp/NewLocation --project MyApp.xcodeproj
 ```
 
 **Remove file reference:**
@@ -203,9 +193,6 @@ rm Deprecated*.swift
 
 **Need to remove a group?**
 → `xcproj remove_group GROUP` (filesystem folders managed separately with `rm -rf`)
-
-**Need to move a file?**
-→ `xcproj move FILE TARGET_GROUP`
 
 **Need to remove a file?**
 → `xcproj remove FILE` (filesystem files deleted separately with `rm`)

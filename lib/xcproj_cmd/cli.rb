@@ -66,22 +66,6 @@ module XcprojCmd
       exit 1
     end
     
-    desc "move FILE TARGET_GROUP", "Move a file to a different group"
-    method_option :group,
-                  type: :boolean,
-                  default: false,
-                  desc: 'Move a group instead of a file'
-    def move(source, target)
-      if options[:group]
-        Commands::MoveGroup.new(project_path, options).execute(source, target)
-      else
-        Commands::MoveFile.new(project_path, options).execute(source, target)
-      end
-    rescue Error => e
-      puts "Error: #{e.message}".red
-      exit 1
-    end
-    
     desc "info PATH", "Show detailed information about a file or group"
     method_option :json,
                   type: :boolean,

@@ -17,7 +17,6 @@ xcproj help add
 xcproj help remove
 xcproj help add_group
 xcproj help remove_group
-xcproj help move
 xcproj help info
 ```
 
@@ -111,21 +110,6 @@ for feature in Deprecated OldFeature Legacy; do
 done
 ```
 
-### Move Commands
-
-```bash
-# Move a file to different group
-xcproj move LoginView.swift MyApp/Views/Auth --project MyApp.xcodeproj
-
-# Move a group to different parent
-xcproj move MyApp/OldLocation MyApp/NewLocation --project MyApp.xcodeproj --group
-
-# Reorganize files (script example)
-xcproj move ViewModel1.swift MyApp/ViewModels --project MyApp.xcodeproj
-xcproj move ViewModel2.swift MyApp/ViewModels --project MyApp.xcodeproj
-xcproj move Service1.swift MyApp/Services --project MyApp.xcodeproj
-```
-
 ### Info Commands
 
 ```bash
@@ -175,26 +159,7 @@ xcproj add Auth/AuthService.swift --project $PROJECT \
   --targets MyApp
 ```
 
-### Workflow 2: Reorganize Existing Files
-
-```bash
-PROJECT="MyApp.xcodeproj"
-
-# List current structure
-xcproj list --project $PROJECT
-
-# Create new organization structure
-xcproj add_group MyApp/NewStructure/Models --project $PROJECT
-xcproj add_group MyApp/NewStructure/Views --project $PROJECT
-xcproj add_group MyApp/NewStructure/Controllers --project $PROJECT
-
-# Move files to new structure
-xcproj move User.swift MyApp/NewStructure/Models --project $PROJECT
-xcproj move Product.swift MyApp/NewStructure/Models --project $PROJECT
-xcproj move HomeView.swift MyApp/NewStructure/Views --project $PROJECT
-```
-
-### Workflow 3: Clean Up Deprecated Files
+### Workflow 2: Clean Up Deprecated Files
 
 ```bash
 PROJECT="MyApp.xcodeproj"
@@ -214,7 +179,7 @@ rm OldViewController.swift DeprecatedHelper.swift LegacyService.swift
 xcproj list --project $PROJECT
 ```
 
-### Workflow 4: Add Generated Files
+### Workflow 3: Add Generated Files
 
 ```bash
 PROJECT="MyApp.xcodeproj"
@@ -232,7 +197,7 @@ for file in Generated/*.swift; do
 done
 ```
 
-### Workflow 6: Clean Up Deprecated Groups
+### Workflow 4: Clean Up Deprecated Groups
 
 ```bash
 PROJECT="MyApp.xcodeproj"

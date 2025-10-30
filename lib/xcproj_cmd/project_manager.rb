@@ -126,28 +126,6 @@ module XcprojCmd
       group.remove_from_project
     end
     
-    # Move file to a different group
-    def move_file(file_name, target_group_path)
-      file_ref = find_file(file_name)
-      raise FileNotFoundError, "File not found: #{file_name}" unless file_ref
-      
-      target_group = find_group(target_group_path)
-      raise GroupNotFoundError, "Group not found: #{target_group_path}" unless target_group
-      
-      file_ref.move(target_group)
-    end
-    
-    # Move group to a different parent
-    def move_group(group_path, target_group_path)
-      group = find_group(group_path)
-      raise GroupNotFoundError, "Group not found: #{group_path}" unless group
-      
-      target_group = find_group(target_group_path)
-      raise GroupNotFoundError, "Target group not found: #{target_group_path}" unless target_group
-      
-      group.move(target_group)
-    end
-    
     # Get file or group info
     def get_info(path)
       # Try to find as file first
